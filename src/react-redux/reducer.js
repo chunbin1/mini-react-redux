@@ -19,7 +19,7 @@ export function reducer(state = initialState, action) {
   }
 }
 
-export function reducerTwo(state = { yellow:1 }, action) {
+export function reducerTwo(state = { yellow: 1 }, action) {
   switch (action.type) {
     case 'multy':
       return {
@@ -31,7 +31,13 @@ export function reducerTwo(state = { yellow:1 }, action) {
         ...state,
         yellow: state.yellow / 2
       }
+    case 'plus': { 
+      return {
+        ...state,
+        yellow: state.yellow + 1
+      }
+    }
     default:
-      return initialState
+      return state
   }
 }
