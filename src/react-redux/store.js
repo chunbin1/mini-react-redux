@@ -1,8 +1,8 @@
 import { reducer, reducerTwo } from "./reducer";
 import logger from "./middleware";
 
+// enhance可以增强一下dispatch
 export const createStore = (reducer, initialState, enhancer) => {
-  debugger;
   // 如果initialState为函数 且没有enhancer
   if (!enhancer && typeof initialState === "function") {
     enhancer = initialState;
@@ -35,7 +35,7 @@ export const createStore = (reducer, initialState, enhancer) => {
   return { getState, dispatch, subscribe };
 };
 
-// 使用
+// 把多个reducer结合起来
 // combineReducers({
 //   todos,
 //   counter
@@ -68,12 +68,48 @@ const combineReducers = (reducers) => {
   };
 };
 
+const compose = (...funcs) => {
+  if (!funcs) {
+      return args => args
+  }
+  if (funcs.length === 1) {
+      return funcs[0]
+  }
+  return funcs.reduce((f1, f2) => (...args) => f1(f2(...args)))
+}
+
+const applyMiddleware = (...middlewares) =>{
+  return (createStore) => (reducer, initState, enhancer) => {
+    const store = createStore(reducer, initState, enhancer)
+    let dispatch = () => {
+      throw new Error(
+        'Dispatching while constructing your middleware is not allowed. ' +
+          'Other middleware would not be applied to this dispatch.'
+      )
+    }
+
+    const middlewareAPI = {
+        getState: store.getState,
+        dispatch: (action) => dispatch(action)
+    }
+    let chain = middlewares.map(middleware => middleware(middlewareAPI))
+    // 修改dispatch
+    dispatch = compose(...chain)(store.dispatch)
+    return {
+      ...store,
+      dispatch
+    }
+  }
+}
+
+
+
 const combineReducer = combineReducers({
   add: reducer,
   multy: reducerTwo,
 });
 
-const store = createStore(combineReducer, logger); //创建store
+const store = createStore(combineReducer, applyMiddleware(logger)); //创建store
 console.log(store.getState());
 
 // store.subscribe(() => { console.log('组件1收到store的通知') })
