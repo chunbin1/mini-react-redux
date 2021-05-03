@@ -1,4 +1,3 @@
-
 // enhance可以增强一下dispatch
 export const createStore = (reducer, initialState, enhancer) => {
   // 如果initialState为函数 且没有enhancer
@@ -24,9 +23,14 @@ export const createStore = (reducer, initialState, enhancer) => {
     console.log("type", action.type);
     store = reducer(store, action);
     observers.forEach((listener) => listener());
+    return action;
   }
   function subscribe(listener) {
     observers.push(listener);
+    return function unsubscribe() {
+      const index = observers.indexOf(listener);
+      observers.splice(index, 1);
+    };
   }
   // 初始化数据
   dispatch({ type: "@@INIT" });
@@ -68,38 +72,34 @@ export const combineReducers = (reducers) => {
 
 const compose = (...funcs) => {
   if (!funcs) {
-      return args => args
+    return (args) => args;
   }
   if (funcs.length === 1) {
-      return funcs[0]
+    return funcs[0];
   }
-  return funcs.reduce((f1, f2) => (...args) => f1(f2(...args)))
-}
+  return funcs.reduce((f1, f2) => (...args) => f1(f2(...args)));
+};
 
-export const applyMiddleware = (...middlewares) =>{
+export const applyMiddleware = (...middlewares) => {
   return (createStore) => (reducer, initState, enhancer) => {
-    const store = createStore(reducer, initState, enhancer)
+    const store = createStore(reducer, initState, enhancer);
     let dispatch = () => {
       throw new Error(
-        'Dispatching while constructing your middleware is not allowed. ' +
-          'Other middleware would not be applied to this dispatch.'
-      )
-    }
+        "Dispatching while constructing your middleware is not allowed. " +
+          "Other middleware would not be applied to this dispatch."
+      );
+    };
 
     const middlewareAPI = {
-        getState: store.getState,
-        dispatch: (action) => dispatch(action)
-    }
-    let chain = middlewares.map(middleware => middleware(middlewareAPI))
+      getState: store.getState,
+      dispatch: (action) => dispatch(action),
+    };
+    let chain = middlewares.map((middleware) => middleware(middlewareAPI));
     // 修改dispatch
-    dispatch = compose(...chain)(store.dispatch)
+    dispatch = compose(...chain)(store.dispatch);
     return {
       ...store,
-      dispatch
-    }
-  }
-}
-
-
-
-
+      dispatch,
+    };
+  };
+};

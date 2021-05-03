@@ -11,7 +11,11 @@ const initState = {
 };
 const store = createStore(reducers, initState, applyMiddleware(logger)); //创建store
 
+const unsubscribe = store.subscribe(() => {
+  console.log("subscribe发生了");
+});
 store.dispatch({ type: "plus" }); //执行加法操作,给count加1
+unsubscribe();
 store.dispatch({
   type: "subtract",
 });
