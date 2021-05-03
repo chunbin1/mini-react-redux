@@ -2,7 +2,7 @@
 const initialState = {
   count: 0
 }
-export function reducer(state = initialState, action) {
+export function countReducer(state = initialState, action) {
   switch (action.type) {
     case 'plus':
       return {
@@ -15,11 +15,11 @@ export function reducer(state = initialState, action) {
         count: state.count - 1
       }
     default:
-      return initialState
+      return state
   }
 }
 
-export function reducerTwo(state = { yellow: 1 }, action) {
+export function colorReducer(state = { yellow: 1 }, action) {
   switch (action.type) {
     case 'multy':
       return {

@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import store from './store/example'
-// import store2 from './redux/index'
+import store from './mini-redux-store'
+import store2 from './redux-store'
 
 ReactDOM.render(
   <React.StrictMode>
