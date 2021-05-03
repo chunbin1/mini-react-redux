@@ -1,5 +1,3 @@
-import { reducer, reducerTwo } from "./reducer";
-import logger from "./middleware";
 
 // enhance可以增强一下dispatch
 export const createStore = (reducer, initialState, enhancer) => {
@@ -40,7 +38,7 @@ export const createStore = (reducer, initialState, enhancer) => {
 //   todos,
 //   counter
 // })
-const combineReducers = (reducers) => {
+export const combineReducers = (reducers) => {
   const finalReducers = {};
   const reducerKeys = Object.keys(reducers);
 
@@ -78,7 +76,7 @@ const compose = (...funcs) => {
   return funcs.reduce((f1, f2) => (...args) => f1(f2(...args)))
 }
 
-const applyMiddleware = (...middlewares) =>{
+export const applyMiddleware = (...middlewares) =>{
   return (createStore) => (reducer, initState, enhancer) => {
     const store = createStore(reducer, initState, enhancer)
     let dispatch = () => {
@@ -104,15 +102,4 @@ const applyMiddleware = (...middlewares) =>{
 
 
 
-const combineReducer = combineReducers({
-  add: reducer,
-  multy: reducerTwo,
-});
 
-const store = createStore(combineReducer, applyMiddleware(logger)); //创建store
-console.log(store.getState());
-
-// store.subscribe(() => { console.log('组件1收到store的通知') })
-// store.subscribe(() => { console.log('组件2收到store的通知') })
-store.dispatch({ type: "plus" }); //执行加法操作,给count加1
-console.log(store.getState()); //获取state
