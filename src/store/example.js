@@ -1,6 +1,6 @@
 import { reducer, reducerTwo } from "./reducer";
 import logger from "../middleware/logger";
-import { combineReducers, createStore, applyMiddleware } from "../mini-redux/store";
+import { combineReducers, createStore, applyMiddleware } from "../mini-redux";
 
 const combineReducer = combineReducers({
   add: reducer,
@@ -15,3 +15,4 @@ store.dispatch({ type: "plus" }); //执行加法操作,给count加1
 
 console.log(store.getState()); //获取state
 
+export default store
